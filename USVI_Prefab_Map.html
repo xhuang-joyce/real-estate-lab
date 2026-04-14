@@ -64,7 +64,7 @@ const ports = [
   { name: "Port Everglades (Ft. Lauderdale)", lat: 26.0928, lon: -80.1164, color: "#0a66c2", note: "ALTERNATIVE US gateway — Tropical Shipping primary USVI service; Crowley also calls here. Good option for FL/GA/AL factories" },
   { name: "Port of Houston",             lat: 29.7247, lon: -95.0114, color: "#0a66c2", note: "Gulf gateway — Crowley Caribbean service. Best for West/Southwest factories (AZ, CA, OK, CO, TX) where Jax/Everglades would add 1,000+ mi trucking" },
   { name: "San Juan, Puerto Rico",       lat: 18.4655, lon: -66.1057, color: "#7b1fa2", note: "Transshipment hub — all USVI cargo routes through here before fanning out on feeder vessels" },
-  { name: "Gallows Bay (St. Croix)",     lat: 17.7501, lon: -64.6991, color: "#d32f2f", note: "St. Croix inbound seaport — ~2 mi from Governor Juan F. Luis Hospital (FINAL DESTINATION)" }
+  { name: "Krause Lagoon / Port Hamilton (St. Croix)", lat: 17.7025, lon: -64.7500, color: "#d32f2f", note: "St. Croix inbound deep-water seaport (south shore, former HOVENSA / Limetree Bay complex) — ~10 mi trucking to Governor Juan F. Luis Hospital (FINAL DESTINATION)" }
 ];
 
 // ---- Suffolk JFL project destination ----
@@ -75,7 +75,7 @@ const jfl = {
   scope: "Demolition + new ~482,000 sq ft hospital rebuild",
   contract: "Suffolk Construction — Phase 1 cap ~$142M (preconstruction $3.43M + early works $138.9M); total ~$1B (~$834M FEMA)",
   timeline: "Preconstruction ~12 mo; demolition before 2027; ~5-year construction",
-  portLat: 17.7501, portLon: -64.6991,
+  portLat: 17.7025, portLon: -64.7500,
   source: "https://stthomassource.com/content/2026/03/26/gvi-inks-luis-hospital-demolition-rebuild-contract/"
 };
 
@@ -139,7 +139,7 @@ const jflStarIcon = L.divIcon({
   html: `<div style="background:#b71c1c;color:#fff;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:800;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.5);border:3px solid #fff">★ JFL Hospital — Suffolk site</div>`,
   iconSize: null, iconAnchor: [0, 0]
 });
-const gmapsJFL = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent("Gallows Bay, Christiansted, St. Croix")}&destination=${encodeURIComponent(jfl.address)}&travelmode=driving`;
+const gmapsJFL = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent("Krause Lagoon, St. Croix")}&destination=${encodeURIComponent(jfl.address)}&travelmode=driving`;
 L.marker([jfl.lat, jfl.lon], { icon: jflStarIcon }).addTo(map)
   .bindPopup(`
     <div class="popup">
@@ -148,22 +148,22 @@ L.marker([jfl.lat, jfl.lon], { icon: jflStarIcon }).addTo(map)
       <div class="meta"><b>Scope:</b> ${jfl.scope}</div>
       <div class="meta"><b>Contract:</b> ${jfl.contract}</div>
       <div class="meta"><b>Timeline:</b> ${jfl.timeline}</div>
-      <div class="meta"><b>Nearest seaport:</b> Gallows Bay, St. Croix (~2 mi)</div>
-      <div style="margin-top:6px"><a href="${gmapsJFL}" target="_blank">▶ Gallows Bay → JFL driving route</a></div>
+      <div class="meta"><b>Inbound seaport:</b> Krause Lagoon / Port Hamilton, St. Croix (~10 mi via Melvin H. Evans Hwy / Centerline Rd)</div>
+      <div style="margin-top:6px"><a href="${gmapsJFL}" target="_blank">▶ Krause Lagoon → JFL driving route</a></div>
       <div><a href="${jfl.source}" target="_blank">▶ Source</a></div>
     </div>
   `);
-// Final-mile leg: Gallows Bay → JFL
+// Final-mile leg: Krause Lagoon → JFL
 L.polyline([[jfl.portLat, jfl.portLon], [jfl.lat, jfl.lon]], {
   color: "#b71c1c", weight: 3, opacity: 0.9
 }).addTo(map);
 
-// ---- Ocean routes (all terminate at Gallows Bay, St. Croix) ----
+// ---- Ocean routes (all terminate at Krause Lagoon / Port Hamilton, St. Croix) ----
 const oceanRoutes = [
   { from: [30.3322, -81.6557], to: [18.4655, -66.1057], label: "Jacksonville → San Juan (TOTE weekly, 2–3 day transit)", color: "#0a66c2" },
   { from: [26.0928, -80.1164], to: [18.4655, -66.1057], label: "Port Everglades → San Juan (Tropical Shipping / Crowley)", color: "#1976d2" },
   { from: [29.7247, -95.0114], to: [18.4655, -66.1057], label: "Houston → San Juan (Crowley Gulf-Caribbean, 5–7 day transit)", color: "#0a66c2" },
-  { from: [18.4655, -66.1057], to: [17.7501, -64.6991], label: "San Juan → Gallows Bay, St. Croix (feeder vessel to JFL site, +1–2 days)", color: "#b71c1c" }
+  { from: [18.4655, -66.1057], to: [17.7025, -64.7500], label: "San Juan → Krause Lagoon / Port Hamilton, St. Croix (feeder vessel to JFL site, +1–2 days)", color: "#b71c1c" }
 ];
 oceanRoutes.forEach(r => {
   L.polyline([r.from, r.to], {
@@ -191,7 +191,7 @@ legend.onAdd = function() {
     <hr style="margin:6px 0">
     <div><span class="line"></span>Trucking leg (factory → US port)</div>
     <div><span class="line dashed" style="border-top-color:#0a66c2"></span>Ocean leg, mainland → San Juan</div>
-    <div><span class="line dashed" style="border-top-color:#b71c1c"></span>San Juan → Gallows Bay (St. Croix)</div>
+    <div><span class="line dashed" style="border-top-color:#b71c1c"></span>San Juan → Krause Lagoon (St. Croix)</div>
     <hr style="margin:6px 0">
     <div><span style="color:#b71c1c;font-weight:700">★</span> <b>JFL Hospital</b> — Suffolk final destination</div>
   `;
