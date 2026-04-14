@@ -2,17 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>USVI Prefab Supplier Map — Factories → Ports → Suffolk Project Sites (JFL & Schneider)</title>
+<title>USVI Prefab Supplier Map — HIGH Priority Factories → Ports → JFL Hospital (St. Croix)</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <style>
   html, body { margin: 0; padding: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
   #map { height: 100vh; width: 100%; }
-  .legend { background: white; padding: 10px 14px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.15); font-size: 13px; line-height: 1.6; max-width: 260px; }
+  .legend { background: white; padding: 10px 14px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,.15); font-size: 13px; line-height: 1.7; max-width: 290px; }
   .legend h4 { margin: 0 0 6px; font-size: 14px; }
   .legend .sw { display: inline-block; width: 14px; height: 14px; margin-right: 6px; vertical-align: middle; border-radius: 50%; }
   .legend .line { display: inline-block; width: 24px; height: 0; border-top: 3px solid #333; margin-right: 6px; vertical-align: middle; }
   .legend .line.dashed { border-top: 3px dashed #0a66c2; }
+  .legend .trade-icon { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; background: #1F3864; color: white; align-items: center; justify-content: center; font-size: 11px; margin-right: 6px; vertical-align: middle; }
+  .trade-marker { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 2px 6px rgba(0,0,0,.35); color: white; font-size: 16px; }
   .popup h3 { margin: 0 0 4px; font-size: 14px; }
   .popup .meta { font-size: 12px; color: #555; margin-bottom: 4px; }
   .popup .feas { display: inline-block; padding: 1px 6px; border-radius: 3px; color: white; font-size: 11px; font-weight: 600; }
@@ -23,72 +26,58 @@
 </head>
 <body>
 <div id="map"></div>
-<div class="title-banner">USVI Prefab Supplier Map — Factory → Port → JFL (St. Croix) &amp; Schneider (St. Thomas)</div>
+<div class="title-banner">USVI Prefab Supplier Map — HIGH Priority Factories → US Port → San Juan → JFL Hospital (St. Croix)</div>
 <script>
-// ---- Factories (coordinates approximate from published addresses) ----
+// ---- Trade category icon mapping (Font Awesome) ----
+const tradeIcon = {
+  "Bathroom Pods":            "fa-solid fa-bath",
+  "MEP Racks / Risers":       "fa-solid fa-plug",
+  "Patient Headwalls":        "fa-solid fa-hospital",
+  "OR / Clean Room Ceilings": "fa-solid fa-layer-group"
+};
+
+// ---- HIGH priority factories only ----
 const factories = [
-  // HIGH PRIORITY — Bathroom Pods
-  { name: "SurePods (Orlando)", lat: 28.5383, lon: -81.3792, category: "Bathroom Pods", priority: "HIGH", feas: "HIGH", address: "Orlando, FL (main US factory)", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.surepods.com/knowledge-center/driving-innovation-in-healthcare" },
-  { name: "SurePods (Phoenix)", lat: 33.4484, lon: -112.0740, category: "Bathroom Pods", priority: "HIGH", feas: "MED-LOW", address: "Phoenix, AZ ('SurePods West')", port: "Houston", portLat: 29.7247, portLon: -95.0114, source: "https://www.prweb.com/releases/surepods-heads-west-with-new-facility-expands-prefabricated-bathroom-pod-production-capacity-858186794.html" },
-  { name: "BLOX", lat: 33.4018, lon: -86.9542, category: "Bathroom Pods", priority: "HIGH", feas: "MED-HIGH", address: "2625 5th Ave N, Bessemer, AL 35020", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.chamberofcommerce.com/business-directory/alabama/bessemer/manufacturer/2004017181-blox" },
-  // HIGH PRIORITY — MEP Racks / Risers
-  { name: "Fluid Cooling Systems", lat: 42.9634, lon: -83.6802, category: "MEP Racks / Risers", priority: "HIGH", feas: "MED", address: "4047 Market Place, Flint, MI 48507", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.fluidcoolingsystems.com/contact-us/" },
-  { name: "EIG (Surprise AZ mfg)", lat: 33.6292, lon: -112.3680, category: "MEP Racks / Risers", priority: "HIGH", feas: "MED-LOW", address: "Surprise, AZ (manufacturing)", port: "Houston", portLat: 29.7247, portLon: -95.0114, source: "https://www.eigllc.com/careers" },
-  { name: "EIG HQ (Redwood City)", lat: 37.4852, lon: -122.2364, category: "MEP Racks / Risers", priority: "HIGH", feas: "MED-LOW", address: "Redwood City, CA (HQ)", port: "Houston", portLat: 29.7247, portLon: -95.0114, source: "https://www.eigllc.com/about-us" },
-  { name: "Epsilon Industries (TX)", lat: 29.7604, lon: -95.3698, category: "MEP Racks / Risers", priority: "HIGH", feas: "MED", address: "Texas (exact not public)", port: "Houston", portLat: 29.7247, portLon: -95.0114, source: "https://epsilonfab.com/" },
-  // HIGH PRIORITY — Patient Headwalls
-  { name: "DIRTT (Savannah)", lat: 32.0835, lon: -81.0998, category: "Patient Headwalls", priority: "HIGH", feas: "HIGH", address: "Savannah, GA (highest-producing DIRTT plant)", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.selectgeorgia.com/blog/success-stories/dirtt/" },
-  { name: "DIRTT (Phoenix)", lat: 33.4484, lon: -112.0740, category: "Patient Headwalls", priority: "HIGH", feas: "MED-LOW", address: "Phoenix, AZ (72,000 sq ft)", port: "Houston", portLat: 29.7247, portLon: -95.0114, source: "https://mcshaneconstruction.com/portfolio/dirtt-environmental-solutions/" },
-  { name: "DIRTT (Calgary HQ)", lat: 51.0447, lon: -114.0719, category: "Patient Headwalls", priority: "HIGH", feas: "LOW", address: "7303 30 Street SE, Calgary, AB T2C 1N6", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.dnb.com/business-directory/company-profiles.dirtt_environmental_solutions_ltd.23577a5c38e2937c6a0d35efe53e3dde.html" },
-  { name: "Amico (Burlington ON)", lat: 43.3255, lon: -79.7990, category: "Patient Headwalls", priority: "HIGH", feas: "MED", address: "1080 Corporate Drive, Burlington, ON L7L 5R6", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://amicoglobal.com/manufacturing/" },
-  { name: "Amico (Richmond Hill HQ)", lat: 43.8828, lon: -79.4403, category: "Patient Headwalls", priority: "HIGH", feas: "MED", address: "85 Fulton Way, Richmond Hill, ON L4B 2N4", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://amicoglobal.com/manufacturing/" },
-  { name: "Modular Services Co.", lat: 35.5729, lon: -97.5127, category: "Patient Headwalls", priority: "HIGH", feas: "MED", address: "500 E. Britton Rd, Oklahoma City, OK 73114", port: "Houston", portLat: 29.7247, portLon: -95.0114, source: "https://www.yellowpages.com/oklahoma-city-ok/mip/modular-services-company-463703869" },
-  // HIGH PRIORITY — OR / Clean Room Ceilings
-  { name: "Synergy Med", lat: 39.7394, lon: -105.1586, category: "OR / Clean Room Ceilings", priority: "HIGH", feas: "MED", address: "14143 Denver West Pkwy #100, Golden, CO 80401", port: "Houston", portLat: 29.7247, portLon: -95.0114, source: "https://www.cbinsights.com/company/synergy-med-global-design-solutions" },
-  // MEDIUM PRIORITY — Interior Drywall Kits
-  { name: "Sto Corp (Atlanta HQ)", lat: 33.7490, lon: -84.3880, category: "Interior Drywall Kits", priority: "MED", feas: "MED-HIGH", address: "Atlanta, GA (HQ + mfg)", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.stocorp.com/who-we-are/" },
-  // MEDIUM PRIORITY — Central Utility Plant
-  { name: "MODLOGIQ", lat: 40.1012, lon: -76.0858, category: "Central Utility Plant", priority: "MED", feas: "MED", address: "191 Quality Circle, New Holland, PA 17557", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.dnb.com/business-directory/company-profiles.modlogiq_inc.f862cef333cb19a29b51e70de53868b4.html" },
-  { name: "BMarko Structures", lat: 33.7490, lon: -84.3880, category: "Central Utility Plant", priority: "MED", feas: "MED-HIGH", address: "Atlanta, GA", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://bmarkostructures.com/about-us/" },
-  // MEDIUM PRIORITY — Precut Hangers
-  { name: "MMS / Eberl Iron Works", lat: 42.8864, lon: -78.8784, category: "Precut Hangers", priority: "MED", feas: "MED-HIGH", address: "128 Sycamore St, Buffalo, NY 14204", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://eberliron.com/contact-us/" },
-  { name: "National Pipe Hanger Corp", lat: 39.9926, lon: -74.7879, category: "Precut Hangers", priority: "MED", feas: "MED", address: "200 Campus Dr, Mount Holly, NJ 08060", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.yelp.com/biz/national-pipe-hanger-mount-holly" }
+  // Bathroom Pods
+  { name: "SurePods (Orlando)",        lat: 28.5383, lon: -81.3792, category: "Bathroom Pods", feas: "HIGH",     address: "Orlando, FL (main US factory)",                     port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.surepods.com/knowledge-center/driving-innovation-in-healthcare" },
+  { name: "SurePods (Phoenix)",        lat: 33.4484, lon: -112.0740, category: "Bathroom Pods", feas: "MED-LOW", address: "Phoenix, AZ ('SurePods West')",                     port: "Houston",      portLat: 29.7247, portLon: -95.0114, source: "https://www.prweb.com/releases/surepods-heads-west-with-new-facility-expands-prefabricated-bathroom-pod-production-capacity-858186794.html" },
+  { name: "BLOX",                      lat: 33.4018, lon: -86.9542,  category: "Bathroom Pods", feas: "MED-HIGH", address: "2625 5th Ave N, Bessemer, AL 35020",                port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.chamberofcommerce.com/business-directory/alabama/bessemer/manufacturer/2004017181-blox" },
+  // MEP Racks / Risers
+  { name: "Fluid Cooling Systems",     lat: 42.9634, lon: -83.6802,  category: "MEP Racks / Risers", feas: "MED",     address: "4047 Market Place, Flint, MI 48507",            port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.fluidcoolingsystems.com/contact-us/" },
+  { name: "EIG (Surprise AZ mfg)",     lat: 33.6292, lon: -112.3680, category: "MEP Racks / Risers", feas: "MED-LOW", address: "Surprise, AZ (manufacturing)",                 port: "Houston",      portLat: 29.7247, portLon: -95.0114, source: "https://www.eigllc.com/careers" },
+  { name: "EIG HQ (Redwood City)",     lat: 37.4852, lon: -122.2364, category: "MEP Racks / Risers", feas: "MED-LOW", address: "Redwood City, CA (HQ)",                        port: "Houston",      portLat: 29.7247, portLon: -95.0114, source: "https://www.eigllc.com/about-us" },
+  { name: "Epsilon Industries (TX)",   lat: 29.7604, lon: -95.3698,  category: "MEP Racks / Risers", feas: "MED",     address: "Texas (exact not public)",                     port: "Houston",      portLat: 29.7247, portLon: -95.0114, source: "https://epsilonfab.com/" },
+  // Patient Headwalls
+  { name: "DIRTT (Savannah)",          lat: 32.0835, lon: -81.0998,  category: "Patient Headwalls", feas: "HIGH",     address: "Savannah, GA (highest-producing DIRTT plant)", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.selectgeorgia.com/blog/success-stories/dirtt/" },
+  { name: "DIRTT (Phoenix)",           lat: 33.4484, lon: -112.0740, category: "Patient Headwalls", feas: "MED-LOW", address: "Phoenix, AZ (72,000 sq ft)",                    port: "Houston",      portLat: 29.7247, portLon: -95.0114, source: "https://mcshaneconstruction.com/portfolio/dirtt-environmental-solutions/" },
+  { name: "DIRTT (Calgary HQ)",        lat: 51.0447, lon: -114.0719, category: "Patient Headwalls", feas: "LOW",      address: "7303 30 Street SE, Calgary, AB T2C 1N6",        port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.dnb.com/business-directory/company-profiles.dirtt_environmental_solutions_ltd.23577a5c38e2937c6a0d35efe53e3dde.html" },
+  { name: "Amico (Burlington ON)",     lat: 43.3255, lon: -79.7990,  category: "Patient Headwalls", feas: "MED",      address: "1080 Corporate Drive, Burlington, ON L7L 5R6",  port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://amicoglobal.com/manufacturing/" },
+  { name: "Amico (Richmond Hill HQ)",  lat: 43.8828, lon: -79.4403,  category: "Patient Headwalls", feas: "MED",      address: "85 Fulton Way, Richmond Hill, ON L4B 2N4",      port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://amicoglobal.com/manufacturing/" },
+  { name: "Modular Services Co.",      lat: 35.5729, lon: -97.5127,  category: "Patient Headwalls", feas: "MED",      address: "500 E. Britton Rd, Oklahoma City, OK 73114",    port: "Houston",      portLat: 29.7247, portLon: -95.0114, source: "https://www.yellowpages.com/oklahoma-city-ok/mip/modular-services-company-463703869" },
+  // OR / Clean Room Ceilings
+  { name: "Synergy Med",               lat: 39.7394, lon: -105.1586, category: "OR / Clean Room Ceilings", feas: "MED", address: "14143 Denver West Pkwy #100, Golden, CO 80401", port: "Houston",    portLat: 29.7247, portLon: -95.0114, source: "https://www.cbinsights.com/company/synergy-med-global-design-solutions" }
 ];
 
-// ---- Ports ----
+// ---- US mainland ports ----
 const ports = [
-  { name: "Jacksonville Port", lat: 30.3322, lon: -81.6557, note: "Primary mainland gateway — TOTE Maritime weekly service to USVI via San Juan" },
-  { name: "Port of Houston", lat: 29.7247, lon: -95.0114, note: "Gulf gateway — Crowley / Tropical Shipping to Caribbean" },
-  { name: "San Juan, Puerto Rico", lat: 18.4655, lon: -66.1057, note: "Transshipment hub — all USVI cargo routes through here before fanning out to STT / STX" },
-  { name: "Crown Bay (St. Thomas seaport)", lat: 18.3331, lon: -64.9496, note: "St. Thomas inbound container port — ~2 mi from Schneider Regional Medical Center" },
-  { name: "Gallows Bay (St. Croix seaport)", lat: 17.7501, lon: -64.6991, note: "St. Croix inbound container port (Christiansted) — ~2 mi from Governor Juan F. Luis Hospital" }
+  { name: "Jacksonville Port",           lat: 30.3322, lon: -81.6557, color: "#0a66c2", note: "PRIMARY US gateway to USVI — TOTE Maritime weekly direct to St. Thomas & St. Croix (fastest transit, 2–3 days)" },
+  { name: "Port Everglades (Ft. Lauderdale)", lat: 26.0928, lon: -80.1164, color: "#0a66c2", note: "ALTERNATIVE US gateway — Tropical Shipping primary USVI service; Crowley also calls here. Good option for FL/GA/AL factories" },
+  { name: "Port of Houston",             lat: 29.7247, lon: -95.0114, color: "#0a66c2", note: "Gulf gateway — Crowley Caribbean service. Best for West/Southwest factories (AZ, CA, OK, CO, TX) where Jax/Everglades would add 1,000+ mi trucking" },
+  { name: "San Juan, Puerto Rico",       lat: 18.4655, lon: -66.1057, color: "#7b1fa2", note: "Transshipment hub — all USVI cargo routes through here before fanning out on feeder vessels" },
+  { name: "Gallows Bay (St. Croix)",     lat: 17.7501, lon: -64.6991, color: "#d32f2f", note: "St. Croix inbound seaport — ~2 mi from Governor Juan F. Luis Hospital (FINAL DESTINATION)" }
 ];
 
-// ---- Suffolk project destination sites (final delivery points) ----
-const destinations = [
-  {
-    name: "Governor Juan F. Luis Hospital (JFL) — PRIMARY",
-    lat: 17.7459, lon: -64.7028,
-    address: "4007 Estate Diamond Ruby, Christiansted, St. Croix, USVI 00821",
-    scope: "Demolition + new 482,000 sq ft hospital rebuild",
-    contract: "Suffolk Construction — Phase 1 capped at ~$142M (preconstruction $3.43M + early works $138.9M); total project ~$1B (FEMA ~$834M)",
-    timeline: "Preconstruction ~12 mo; demolition before 2027; 5-year construction",
-    nearestPort: "Gallows Bay, St. Croix (~2 mi)",
-    portLat: 17.7501, portLon: -64.6991,
-    source: "https://stthomassource.com/content/2026/03/26/gvi-inks-luis-hospital-demolition-rebuild-contract/"
-  },
-  {
-    name: "Schneider Regional Medical Center — SECONDARY",
-    lat: 18.3419, lon: -64.9249,
-    address: "9048 Sugar Estate, Charlotte Amalie, St. Thomas, USVI 00802",
-    scope: "St. Thomas Healthcare Bundle (Rebuild USVI Initiative)",
-    contract: "Suffolk Construction — ~$103M approved by USVI PFA",
-    timeline: "Part of Rebuild USVI healthcare program",
-    nearestPort: "Crown Bay, St. Thomas (~2 mi)",
-    portLat: 18.3331, portLon: -64.9496,
-    source: "https://www.usviodr.com/odr-and-jfl-execute-contract-for-new-hospital-construction/"
-  }
-];
+// ---- Suffolk JFL project destination ----
+const jfl = {
+  name: "Governor Juan F. Luis Hospital (JFL)",
+  lat: 17.7459, lon: -64.7028,
+  address: "4007 Estate Diamond Ruby, Christiansted, St. Croix, USVI 00821",
+  scope: "Demolition + new ~482,000 sq ft hospital rebuild",
+  contract: "Suffolk Construction — Phase 1 cap ~$142M (preconstruction $3.43M + early works $138.9M); total ~$1B (~$834M FEMA)",
+  timeline: "Preconstruction ~12 mo; demolition before 2027; ~5-year construction",
+  portLat: 17.7501, portLon: -64.6991,
+  source: "https://stthomassource.com/content/2026/03/26/gvi-inks-luis-hospital-demolition-rebuild-contract/"
+};
 
 // ---- Feasibility colors ----
 const feasColor = { "HIGH": "#2e7d32", "MED-HIGH": "#689f38", "MED": "#f9a825", "MED-LOW": "#ef6c00", "LOW": "#c62828" };
@@ -100,84 +89,81 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18
 }).addTo(map);
 
-// ---- Plot factories ----
+// ---- Plot factories with trade-category icons ----
 factories.forEach(f => {
   const color = feasColor[f.feas] || "#555";
-  const marker = L.circleMarker([f.lat, f.lon], {
-    radius: 9, fillColor: color, color: "#000", weight: 1.5, opacity: 1, fillOpacity: 0.85
-  }).addTo(map);
+  const iconClass = tradeIcon[f.category] || "fa-solid fa-industry";
+  const icon = L.divIcon({
+    className: 'factory-icon',
+    html: `<div class="trade-marker" style="background:${color}"><i class="${iconClass}"></i></div>`,
+    iconSize: [38, 38],
+    iconAnchor: [19, 19]
+  });
+  const marker = L.marker([f.lat, f.lon], { icon }).addTo(map);
 
   const gmapsURL = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(f.address)}&destination=${encodeURIComponent("Port of " + f.port)}&travelmode=driving`;
 
   marker.bindPopup(`
     <div class="popup">
-      <h3>${f.name}</h3>
-      <div class="meta"><b>Category:</b> ${f.category} (${f.priority})</div>
+      <h3><i class="${iconClass}" style="color:${color};margin-right:6px"></i>${f.name}</h3>
+      <div class="meta"><b>Category:</b> ${f.category} (HIGH priority trade)</div>
       <div class="meta"><b>Address:</b> ${f.address}</div>
-      <div class="meta"><b>Nearest port:</b> ${f.port}</div>
+      <div class="meta"><b>Assigned port:</b> ${f.port}</div>
       <div class="meta"><span class="feas" style="background:${color}">${f.feas}</span></div>
       <div style="margin-top:6px"><a href="${gmapsURL}" target="_blank">▶ Driving route on Google Maps</a></div>
       <div><a href="${f.source}" target="_blank">▶ Source</a></div>
     </div>
   `);
 
-  // Driving leg: factory → its port
+  // Driving leg: factory → its assigned port
   L.polyline([[f.lat, f.lon], [f.portLat, f.portLon]], {
-    color: color, weight: 2, opacity: 0.6
+    color: color, weight: 2, opacity: 0.55
   }).addTo(map);
 });
 
 // ---- Plot ports ----
 ports.forEach(p => {
-  const isUSVIPort = p.name.includes("Crown Bay") || p.name.includes("Gallows Bay");
-  const isTransship = p.name.includes("San Juan");
   const marker = L.marker([p.lat, p.lon], {
     icon: L.divIcon({
       className: 'port-icon',
-      html: `<div style="background:${isUSVIPort?'#d32f2f':isTransship?'#7b1fa2':'#0a66c2'};color:white;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.3)">⚓ ${p.name}</div>`,
+      html: `<div style="background:${p.color};color:white;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.3)">⚓ ${p.name}</div>`,
       iconSize: null, iconAnchor: [0, 0]
     })
   }).addTo(map);
   marker.bindPopup(`<div class="popup"><h3>⚓ ${p.name}</h3><div class="meta">${p.note}</div></div>`);
 });
 
-// ---- Plot Suffolk destination sites (star markers) ----
-destinations.forEach(d => {
-  const isPrimary = d.name.includes("PRIMARY");
-  const starColor = isPrimary ? "#b71c1c" : "#c2185b";
-  const starIcon = L.divIcon({
-    className: 'destination-icon',
-    html: `<div style="background:${starColor};color:#fff;padding:6px 10px;border-radius:6px;font-size:12px;font-weight:700;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.4);border:2px solid #fff">★ ${isPrimary?'JFL (St. Croix)':'Schneider (St. Thomas)'}</div>`,
-    iconSize: null, iconAnchor: [0, 0]
-  });
-  const gmapsURL = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent("Port of " + (isPrimary ? "Gallows Bay, St. Croix" : "Crown Bay, St. Thomas"))}&destination=${encodeURIComponent(d.address)}&travelmode=driving`;
-  L.marker([d.lat, d.lon], { icon: starIcon }).addTo(map)
-    .bindPopup(`
-      <div class="popup">
-        <h3>★ ${d.name}</h3>
-        <div class="meta"><b>Address:</b> ${d.address}</div>
-        <div class="meta"><b>Scope:</b> ${d.scope}</div>
-        <div class="meta"><b>Contract:</b> ${d.contract}</div>
-        <div class="meta"><b>Timeline:</b> ${d.timeline}</div>
-        <div class="meta"><b>Nearest USVI port:</b> ${d.nearestPort}</div>
-        <div style="margin-top:6px"><a href="${gmapsURL}" target="_blank">▶ Port → site driving route</a></div>
-        <div><a href="${d.source}" target="_blank">▶ Source</a></div>
-      </div>
-    `);
-  // Final-mile leg: USVI port → site (solid red)
-  L.polyline([[d.portLat, d.portLon], [d.lat, d.lon]], {
-    color: starColor, weight: 3, opacity: 0.9
-  }).addTo(map);
+// ---- Plot JFL destination (star marker) ----
+const jflStarIcon = L.divIcon({
+  className: 'destination-icon',
+  html: `<div style="background:#b71c1c;color:#fff;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:800;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.5);border:3px solid #fff">★ JFL Hospital — Suffolk site</div>`,
+  iconSize: null, iconAnchor: [0, 0]
 });
+const gmapsJFL = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent("Gallows Bay, Christiansted, St. Croix")}&destination=${encodeURIComponent(jfl.address)}&travelmode=driving`;
+L.marker([jfl.lat, jfl.lon], { icon: jflStarIcon }).addTo(map)
+  .bindPopup(`
+    <div class="popup">
+      <h3>★ ${jfl.name}</h3>
+      <div class="meta"><b>Address:</b> ${jfl.address}</div>
+      <div class="meta"><b>Scope:</b> ${jfl.scope}</div>
+      <div class="meta"><b>Contract:</b> ${jfl.contract}</div>
+      <div class="meta"><b>Timeline:</b> ${jfl.timeline}</div>
+      <div class="meta"><b>Nearest seaport:</b> Gallows Bay, St. Croix (~2 mi)</div>
+      <div style="margin-top:6px"><a href="${gmapsJFL}" target="_blank">▶ Gallows Bay → JFL driving route</a></div>
+      <div><a href="${jfl.source}" target="_blank">▶ Source</a></div>
+    </div>
+  `);
+// Final-mile leg: Gallows Bay → JFL
+L.polyline([[jfl.portLat, jfl.portLon], [jfl.lat, jfl.lon]], {
+  color: "#b71c1c", weight: 3, opacity: 0.9
+}).addTo(map);
 
-// ---- Ocean routes (dashed) — now routed to the actual Suffolk destination ports ----
-// JFL (St. Croix) is primary — most cargo goes Jacksonville→San Juan→Gallows Bay, with Houston→San Juan→Gallows Bay via Crowley
-// Schneider (St. Thomas) — TOTE Jacksonville→San Juan→Crown Bay
+// ---- Ocean routes (all terminate at Gallows Bay, St. Croix) ----
 const oceanRoutes = [
-  { from: [30.3322, -81.6557], to: [18.4655, -66.1057], label: "Jacksonville → San Juan (TOTE weekly, 2–3 days transit)", color: "#0a66c2" },
-  { from: [29.7247, -95.0114], to: [18.4655, -66.1057], label: "Houston → San Juan (Crowley / Tropical, 5–7 days transit)", color: "#0a66c2" },
-  { from: [18.4655, -66.1057], to: [17.7501, -64.6991], label: "San Juan → Gallows Bay, St. Croix (transshipment to JFL — PRIMARY)", color: "#b71c1c" },
-  { from: [18.4655, -66.1057], to: [18.3331, -64.9496], label: "San Juan → Crown Bay, St. Thomas (transshipment to Schneider)", color: "#c2185b" }
+  { from: [30.3322, -81.6557], to: [18.4655, -66.1057], label: "Jacksonville → San Juan (TOTE weekly, 2–3 day transit)", color: "#0a66c2" },
+  { from: [26.0928, -80.1164], to: [18.4655, -66.1057], label: "Port Everglades → San Juan (Tropical Shipping / Crowley)", color: "#1976d2" },
+  { from: [29.7247, -95.0114], to: [18.4655, -66.1057], label: "Houston → San Juan (Crowley Gulf-Caribbean, 5–7 day transit)", color: "#0a66c2" },
+  { from: [18.4655, -66.1057], to: [17.7501, -64.6991], label: "San Juan → Gallows Bay, St. Croix (feeder vessel to JFL site, +1–2 days)", color: "#b71c1c" }
 ];
 oceanRoutes.forEach(r => {
   L.polyline([r.from, r.to], {
@@ -190,7 +176,13 @@ const legend = L.control({ position: 'bottomright' });
 legend.onAdd = function() {
   const div = L.DomUtil.create('div', 'legend');
   div.innerHTML = `
-    <h4>Feasibility (by geography)</h4>
+    <h4>HIGH priority trade categories</h4>
+    <div><span class="trade-icon"><i class="fa-solid fa-bath"></i></span>Bathroom Pods</div>
+    <div><span class="trade-icon"><i class="fa-solid fa-plug"></i></span>MEP Racks / Risers</div>
+    <div><span class="trade-icon"><i class="fa-solid fa-hospital"></i></span>Patient Headwalls</div>
+    <div><span class="trade-icon"><i class="fa-solid fa-layer-group"></i></span>OR / Clean Room Ceilings</div>
+    <hr style="margin:6px 0">
+    <h4>Feasibility (circle color)</h4>
     <div><span class="sw" style="background:#2e7d32"></span>HIGH — near Jacksonville</div>
     <div><span class="sw" style="background:#689f38"></span>MED-HIGH — SE / Atlanta belt</div>
     <div><span class="sw" style="background:#f9a825"></span>MED — long inland haul</div>
@@ -199,11 +191,9 @@ legend.onAdd = function() {
     <hr style="margin:6px 0">
     <div><span class="line"></span>Trucking leg (factory → US port)</div>
     <div><span class="line dashed" style="border-top-color:#0a66c2"></span>Ocean leg, mainland → San Juan</div>
-    <div><span class="line dashed" style="border-top-color:#b71c1c"></span>San Juan → Gallows Bay (St. Croix / JFL)</div>
-    <div><span class="line dashed" style="border-top-color:#c2185b"></span>San Juan → Crown Bay (St. Thomas / Schneider)</div>
+    <div><span class="line dashed" style="border-top-color:#b71c1c"></span>San Juan → Gallows Bay (St. Croix)</div>
     <hr style="margin:6px 0">
-    <div><span style="color:#b71c1c;font-weight:700">★</span> <b>JFL Hospital</b> — Suffolk primary site</div>
-    <div><span style="color:#c2185b;font-weight:700">★</span> <b>Schneider Regional</b> — secondary site</div>
+    <div><span style="color:#b71c1c;font-weight:700">★</span> <b>JFL Hospital</b> — Suffolk final destination</div>
   `;
   return div;
 };
