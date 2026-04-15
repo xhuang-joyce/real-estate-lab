@@ -37,34 +37,37 @@ const tradeIcon = {
 };
 
 // ---- HIGH priority factories only ----
+// Primary routing: East origins → Port of Palm Beach (Tropical Shipping, DIRECT to STX, 3-day ocean)
+//                   West/SW origins → Port of Houston (Crowley, via SJU/DR feeder, 5-7 day ocean)
+// Alt: Jacksonville (TOTE, US-flag, via SJU transship) — for compliance-driven lanes
 const factories = [
   // Bathroom Pods
-  { name: "SurePods (Orlando)",        lat: 28.5383, lon: -81.3792, category: "Bathroom Pods", feas: "HIGH",     address: "Orlando, FL (main US factory)",                     port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.surepods.com/knowledge-center/driving-innovation-in-healthcare" },
-  { name: "SurePods (Phoenix)",        lat: 33.4484, lon: -112.0740, category: "Bathroom Pods", feas: "MED-LOW", address: "Phoenix, AZ ('SurePods West')",                     port: "Houston",      portLat: 29.7247, portLon: -95.0114, source: "https://www.prweb.com/releases/surepods-heads-west-with-new-facility-expands-prefabricated-bathroom-pod-production-capacity-858186794.html" },
-  { name: "BLOX",                      lat: 33.4018, lon: -86.9542,  category: "Bathroom Pods", feas: "MED-HIGH", address: "2625 5th Ave N, Bessemer, AL 35020",                port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.chamberofcommerce.com/business-directory/alabama/bessemer/manufacturer/2004017181-blox" },
+  { name: "SurePods (Orlando)",        lat: 28.5383, lon: -81.3792, category: "Bathroom Pods", feas: "HIGH",     address: "Orlando, FL (main US factory)",                     port: "Port of Palm Beach", portLat: 26.7683, portLon: -80.0534, source: "https://www.surepods.com/knowledge-center/driving-innovation-in-healthcare" },
+  { name: "SurePods (Phoenix)",        lat: 33.4484, lon: -112.0740, category: "Bathroom Pods", feas: "MED-LOW", address: "Phoenix, AZ ('SurePods West')",                     port: "Houston",            portLat: 29.7247, portLon: -95.0114, source: "https://www.prweb.com/releases/surepods-heads-west-with-new-facility-expands-prefabricated-bathroom-pod-production-capacity-858186794.html" },
+  { name: "BLOX",                      lat: 33.4018, lon: -86.9542,  category: "Bathroom Pods", feas: "MED-HIGH", address: "2625 5th Ave N, Bessemer, AL 35020",                port: "Port of Palm Beach", portLat: 26.7683, portLon: -80.0534, source: "https://www.chamberofcommerce.com/business-directory/alabama/bessemer/manufacturer/2004017181-blox" },
   // MEP Racks / Risers
-  { name: "Fluid Cooling Systems",     lat: 42.9634, lon: -83.6802,  category: "MEP Racks / Risers", feas: "MED",     address: "4047 Market Place, Flint, MI 48507",            port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.fluidcoolingsystems.com/contact-us/" },
-  { name: "EIG (Surprise AZ mfg)",     lat: 33.6292, lon: -112.3680, category: "MEP Racks / Risers", feas: "MED-LOW", address: "Surprise, AZ (manufacturing)",                 port: "Houston",      portLat: 29.7247, portLon: -95.0114, source: "https://www.eigllc.com/careers" },
-  { name: "EIG HQ (Redwood City)",     lat: 37.4852, lon: -122.2364, category: "MEP Racks / Risers", feas: "MED-LOW", address: "Redwood City, CA (HQ)",                        port: "Houston",      portLat: 29.7247, portLon: -95.0114, source: "https://www.eigllc.com/about-us" },
-  { name: "Epsilon Industries (TX)",   lat: 29.7604, lon: -95.3698,  category: "MEP Racks / Risers", feas: "MED",     address: "Texas (exact not public)",                     port: "Houston",      portLat: 29.7247, portLon: -95.0114, source: "https://epsilonfab.com/" },
+  { name: "Fluid Cooling Systems",     lat: 42.9634, lon: -83.6802,  category: "MEP Racks / Risers", feas: "MED",     address: "4047 Market Place, Flint, MI 48507",            port: "Port of Palm Beach", portLat: 26.7683, portLon: -80.0534, source: "https://www.fluidcoolingsystems.com/contact-us/" },
+  { name: "EIG (Surprise AZ mfg)",     lat: 33.6292, lon: -112.3680, category: "MEP Racks / Risers", feas: "MED-LOW", address: "Surprise, AZ (manufacturing)",                 port: "Houston",            portLat: 29.7247, portLon: -95.0114, source: "https://www.eigllc.com/careers" },
+  { name: "EIG HQ (Redwood City)",     lat: 37.4852, lon: -122.2364, category: "MEP Racks / Risers", feas: "MED-LOW", address: "Redwood City, CA (HQ)",                        port: "Houston",            portLat: 29.7247, portLon: -95.0114, source: "https://www.eigllc.com/about-us" },
+  { name: "Epsilon Industries (TX)",   lat: 29.7604, lon: -95.3698,  category: "MEP Racks / Risers", feas: "MED",     address: "Texas (exact not public)",                     port: "Houston",            portLat: 29.7247, portLon: -95.0114, source: "https://epsilonfab.com/" },
   // Patient Headwalls
-  { name: "DIRTT (Savannah)",          lat: 32.0835, lon: -81.0998,  category: "Patient Headwalls", feas: "HIGH",     address: "Savannah, GA (highest-producing DIRTT plant)", port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.selectgeorgia.com/blog/success-stories/dirtt/" },
-  { name: "DIRTT (Phoenix)",           lat: 33.4484, lon: -112.0740, category: "Patient Headwalls", feas: "MED-LOW", address: "Phoenix, AZ (72,000 sq ft)",                    port: "Houston",      portLat: 29.7247, portLon: -95.0114, source: "https://mcshaneconstruction.com/portfolio/dirtt-environmental-solutions/" },
-  { name: "DIRTT (Calgary HQ)",        lat: 51.0447, lon: -114.0719, category: "Patient Headwalls", feas: "LOW",      address: "7303 30 Street SE, Calgary, AB T2C 1N6",        port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://www.dnb.com/business-directory/company-profiles.dirtt_environmental_solutions_ltd.23577a5c38e2937c6a0d35efe53e3dde.html" },
-  { name: "Amico (Burlington ON)",     lat: 43.3255, lon: -79.7990,  category: "Patient Headwalls", feas: "MED",      address: "1080 Corporate Drive, Burlington, ON L7L 5R6",  port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://amicoglobal.com/manufacturing/" },
-  { name: "Amico (Richmond Hill HQ)",  lat: 43.8828, lon: -79.4403,  category: "Patient Headwalls", feas: "MED",      address: "85 Fulton Way, Richmond Hill, ON L4B 2N4",      port: "Jacksonville", portLat: 30.3322, portLon: -81.6557, source: "https://amicoglobal.com/manufacturing/" },
-  { name: "Modular Services Co.",      lat: 35.5729, lon: -97.5127,  category: "Patient Headwalls", feas: "MED",      address: "500 E. Britton Rd, Oklahoma City, OK 73114",    port: "Houston",      portLat: 29.7247, portLon: -95.0114, source: "https://www.yellowpages.com/oklahoma-city-ok/mip/modular-services-company-463703869" },
+  { name: "DIRTT (Savannah)",          lat: 32.0835, lon: -81.0998,  category: "Patient Headwalls", feas: "HIGH",     address: "Savannah, GA (highest-producing DIRTT plant)", port: "Port of Palm Beach", portLat: 26.7683, portLon: -80.0534, source: "https://www.selectgeorgia.com/blog/success-stories/dirtt/" },
+  { name: "DIRTT (Phoenix)",           lat: 33.4484, lon: -112.0740, category: "Patient Headwalls", feas: "MED-LOW", address: "Phoenix, AZ (72,000 sq ft)",                    port: "Houston",            portLat: 29.7247, portLon: -95.0114, source: "https://mcshaneconstruction.com/portfolio/dirtt-environmental-solutions/" },
+  { name: "DIRTT (Calgary HQ)",        lat: 51.0447, lon: -114.0719, category: "Patient Headwalls", feas: "LOW",      address: "7303 30 Street SE, Calgary, AB T2C 1N6",        port: "Port of Palm Beach", portLat: 26.7683, portLon: -80.0534, source: "https://www.dnb.com/business-directory/company-profiles.dirtt_environmental_solutions_ltd.23577a5c38e2937c6a0d35efe53e3dde.html" },
+  { name: "Amico (Burlington ON)",     lat: 43.3255, lon: -79.7990,  category: "Patient Headwalls", feas: "MED",      address: "1080 Corporate Drive, Burlington, ON L7L 5R6",  port: "Port of Palm Beach", portLat: 26.7683, portLon: -80.0534, source: "https://amicoglobal.com/manufacturing/" },
+  { name: "Amico (Richmond Hill HQ)",  lat: 43.8828, lon: -79.4403,  category: "Patient Headwalls", feas: "MED",      address: "85 Fulton Way, Richmond Hill, ON L4B 2N4",      port: "Port of Palm Beach", portLat: 26.7683, portLon: -80.0534, source: "https://amicoglobal.com/manufacturing/" },
+  { name: "Modular Services Co.",      lat: 35.5729, lon: -97.5127,  category: "Patient Headwalls", feas: "MED",      address: "500 E. Britton Rd, Oklahoma City, OK 73114",    port: "Houston",            portLat: 29.7247, portLon: -95.0114, source: "https://www.yellowpages.com/oklahoma-city-ok/mip/modular-services-company-463703869" },
   // OR / Clean Room Ceilings
-  { name: "Synergy Med",               lat: 39.7394, lon: -105.1586, category: "OR / Clean Room Ceilings", feas: "MED", address: "14143 Denver West Pkwy #100, Golden, CO 80401", port: "Houston",    portLat: 29.7247, portLon: -95.0114, source: "https://www.cbinsights.com/company/synergy-med-global-design-solutions" }
+  { name: "Synergy Med",               lat: 39.7394, lon: -105.1586, category: "OR / Clean Room Ceilings", feas: "MED", address: "14143 Denver West Pkwy #100, Golden, CO 80401", port: "Houston",          portLat: 29.7247, portLon: -95.0114, source: "https://www.cbinsights.com/company/synergy-med-global-design-solutions" }
 ];
 
 // ---- US mainland ports ----
 const ports = [
-  { name: "Jacksonville Port",           lat: 30.3322, lon: -81.6557, color: "#0a66c2", note: "PRIMARY US gateway to USVI — TOTE Maritime weekly direct to St. Thomas & St. Croix (fastest transit, 2–3 days)" },
-  { name: "Port Everglades (Ft. Lauderdale)", lat: 26.0928, lon: -80.1164, color: "#0a66c2", note: "ALTERNATIVE US gateway — Tropical Shipping primary USVI service; Crowley also calls here. Good option for FL/GA/AL factories" },
-  { name: "Port of Houston",             lat: 29.7247, lon: -95.0114, color: "#0a66c2", note: "Gulf gateway — Crowley Caribbean service. Best for West/Southwest factories (AZ, CA, OK, CO, TX) where Jax/Everglades would add 1,000+ mi trucking" },
-  { name: "San Juan, Puerto Rico",       lat: 18.4655, lon: -66.1057, color: "#7b1fa2", note: "Transshipment hub — all USVI cargo routes through here before fanning out on feeder vessels" },
-  { name: "Krause Lagoon / Port Hamilton (St. Croix)", lat: 17.7025, lon: -64.7500, color: "#d32f2f", note: "St. Croix inbound deep-water seaport (south shore, former HOVENSA / Limetree Bay complex) — ~10 mi trucking to Governor Juan F. Luis Hospital (FINAL DESTINATION)" }
+  { name: "Port of Palm Beach (Riviera Beach, FL)", lat: 26.7683, lon: -80.0534, color: "#0a66c2", note: "PRIMARY US gateway to St. Croix — Tropical Shipping DIRECT service (3-day ocean, no SJU transship). Tropical holds a 25-yr lease at the Wilfred 'Bomba' Allick Port on St. Croix (signed 2024). Foreign-flag legal under USVI Jones Act exemption." },
+  { name: "Jacksonville Port",           lat: 30.3322, lon: -81.6557, color: "#1976d2", note: "US-flag alternative — TOTE Maritime Jax → San Juan (2–3 days), then feeder to St. Croix (+2–3 days). Useful when cargo must move on US-flag vessels or shipper has existing TOTE contracts." },
+  { name: "Port of Houston",             lat: 29.7247, lon: -95.0114, color: "#0a66c2", note: "Gulf gateway for West/Southwest factories — Crowley Gulf-Caribbean service. Note: Crowley to STX also transships via San Juan / Rio Haina (DR). No direct Houston→STX liner service." },
+  { name: "San Juan, Puerto Rico",       lat: 18.4655, lon: -66.1057, color: "#7b1fa2", note: "Transshipment hub for TOTE (Jax) and Crowley (Houston/PE) services. NOT a mandatory stop — Tropical's Palm Beach → St. Croix is direct." },
+  { name: "Wilfred 'Bomba' Allick Port (Krause Lagoon, St. Croix)", lat: 17.7025, lon: -64.7500, color: "#d32f2f", note: "USVI's main container terminal, south shore Krause Lagoon. 45-acre facility, 1,000 ft dock, 30 ft draft, 30-ton gantry crane, RoRo+LoLo. Gallows Bay (north shore) closed since Hurricane Maria 2017. ~10 mi trucking to JFL via Melvin H. Evans Hwy / Centerline Rd." }
 ];
 
 // ---- Suffolk JFL project destination ----
@@ -148,22 +151,24 @@ L.marker([jfl.lat, jfl.lon], { icon: jflStarIcon }).addTo(map)
       <div class="meta"><b>Scope:</b> ${jfl.scope}</div>
       <div class="meta"><b>Contract:</b> ${jfl.contract}</div>
       <div class="meta"><b>Timeline:</b> ${jfl.timeline}</div>
-      <div class="meta"><b>Inbound seaport:</b> Krause Lagoon / Port Hamilton, St. Croix (~10 mi via Melvin H. Evans Hwy / Centerline Rd)</div>
-      <div style="margin-top:6px"><a href="${gmapsJFL}" target="_blank">▶ Krause Lagoon → JFL driving route</a></div>
+      <div class="meta"><b>Inbound seaport:</b> Wilfred 'Bomba' Allick Port at Krause Lagoon, St. Croix (~10 mi via Melvin H. Evans Hwy / Centerline Rd)</div>
+      <div style="margin-top:6px"><a href="${gmapsJFL}" target="_blank">▶ Wilfred Allick Port → JFL driving route</a></div>
       <div><a href="${jfl.source}" target="_blank">▶ Source</a></div>
     </div>
   `);
-// Final-mile leg: Krause Lagoon → JFL
+// Final-mile leg: Wilfred Allick Port → JFL (~10 mi)
 L.polyline([[jfl.portLat, jfl.portLon], [jfl.lat, jfl.lon]], {
   color: "#b71c1c", weight: 3, opacity: 0.9
 }).addTo(map);
 
-// ---- Ocean routes (all terminate at Krause Lagoon / Port Hamilton, St. Croix) ----
+// ---- Ocean routes ----
+// Tropical (Palm Beach) is DIRECT to STX, bypassing SJU — Jones Act exemption makes foreign-flag legal
+// TOTE (Jax) and Crowley (Houston) both transship via SJU
 const oceanRoutes = [
-  { from: [30.3322, -81.6557], to: [18.4655, -66.1057], label: "Jacksonville → San Juan (TOTE weekly, 2–3 day transit)", color: "#0a66c2" },
-  { from: [26.0928, -80.1164], to: [18.4655, -66.1057], label: "Port Everglades → San Juan (Tropical Shipping / Crowley)", color: "#1976d2" },
-  { from: [29.7247, -95.0114], to: [18.4655, -66.1057], label: "Houston → San Juan (Crowley Gulf-Caribbean, 5–7 day transit)", color: "#0a66c2" },
-  { from: [18.4655, -66.1057], to: [17.7025, -64.7500], label: "San Juan → Krause Lagoon / Port Hamilton, St. Croix (feeder vessel to JFL site, +1–2 days)", color: "#b71c1c" }
+  { from: [26.7683, -80.0534], to: [17.7025, -64.7500], label: "Port of Palm Beach → Wilfred Allick Port, St. Croix (Tropical Shipping DIRECT, 3-day ocean, foreign-flag under USVI Jones Act exemption)", color: "#0a66c2" },
+  { from: [30.3322, -81.6557], to: [18.4655, -66.1057], label: "Jacksonville → San Juan (TOTE Maritime US-flag, twice weekly, 2–3 day transit)", color: "#1976d2" },
+  { from: [29.7247, -95.0114], to: [18.4655, -66.1057], label: "Houston → San Juan (Crowley Gulf-Caribbean, 5–7 day transit)", color: "#1976d2" },
+  { from: [18.4655, -66.1057], to: [17.7025, -64.7500], label: "San Juan → Wilfred Allick Port, St. Croix (feeder vessel, +1–2 days; for TOTE & Crowley cargo)", color: "#b71c1c" }
 ];
 oceanRoutes.forEach(r => {
   L.polyline([r.from, r.to], {
@@ -190,8 +195,9 @@ legend.onAdd = function() {
     <div><span class="sw" style="background:#c62828"></span>LOW — cross-border Canada</div>
     <hr style="margin:6px 0">
     <div><span class="line"></span>Trucking leg (factory → US port)</div>
-    <div><span class="line dashed" style="border-top-color:#0a66c2"></span>Ocean leg, mainland → San Juan</div>
-    <div><span class="line dashed" style="border-top-color:#b71c1c"></span>San Juan → Krause Lagoon (St. Croix)</div>
+    <div><span class="line dashed" style="border-top-color:#0a66c2"></span>Palm Beach → STX DIRECT (Tropical, 3 d)</div>
+    <div><span class="line dashed" style="border-top-color:#1976d2"></span>Jax/Houston → San Juan (TOTE/Crowley)</div>
+    <div><span class="line dashed" style="border-top-color:#b71c1c"></span>SJU → Wilfred Allick Port (feeder)</div>
     <hr style="margin:6px 0">
     <div><span style="color:#b71c1c;font-weight:700">★</span> <b>JFL Hospital</b> — Suffolk final destination</div>
   `;
